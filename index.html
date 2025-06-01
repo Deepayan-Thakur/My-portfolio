@@ -89,8 +89,9 @@
                     </svg>
                     <span>Notes</span>
                 </div>
-                <div class="status-item live-time" id="live-time">
-                    5/31/2025
+                <div class="profile-footer">
+                    <div class="date" id="current-date"></div>
+                    <div class="time-display" id="current-time"></div>
                 </div>
             </div>
         </header>
@@ -142,75 +143,31 @@
 </body>
 <script>
     // Real-time clock update
-    function updateTime() {
+    function updateDateTime() {
         const now = new Date();
-        const options = {
+
+        // Format date (M/D/YYYY)
+        const dateOptions = {
             month: 'numeric',
             day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
+            year: 'numeric'
+        };
+        const dateString = now.toLocaleDateString('en-US', dateOptions);
+
+        // Format time (H:MM:SS AM/PM)
+        const timeOptions = {
+            hour: 'numeric',
             minute: '2-digit',
             second: '2-digit',
-            hour12: false
+            hour12: true
         };
-        const timeString = now.toLocaleDateString('en-US', options);
-        document.getElementById('live-time').textContent = timeString;
+        const timeString = now.toLocaleTimeString('en-US', timeOptions);
+
+        document.getElementById('current-date').textContent = dateString;
+        document.getElementById('current-time').textContent = timeString;
     }
 
-    // Update time immediately and then every second
-    updateTime();
-    setInterval(updateTime, 1000);
-
-    // Navigation functionality
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent default link jump (if it's an <a>)
-
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-
-            // Add active class to the clicked nav item
-            this.classList.add('active');
-
-            // Subtle scale effect simulating haptic feedback
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 100);
-
-            // Scroll smoothly to the target section (assuming href="#sectionId")
-            const targetId = this.getAttribute('href')?.substring(1);
-            if (targetId) {
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
-    });
-
-
-    // Smooth parallax effect with requestAnimationFrame and clamped movement
-    const cards = document.querySelectorAll('.parallax-card');
-
-    function updateParallax() {
-        const scrollY = window.scrollY;
-
-        cards.forEach((card, index) => {
-            const speed = 0.15 + (index % 5) * 0.05;
-            const offset = Math.min(scrollY * speed, 100); // Clamp max offset to 100px
-            card.style.transform = `translateY(${offset}px)`;
-        });
-    }
-
-    let ticking = false;
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateParallax();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    });
+    // Update immediately and then every second
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+</script>
